@@ -1,0 +1,188 @@
+{{> head }}
+<body class="bg-gradient-to-br from-yellow-50 to-orange-50 min-h-screen py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="mb-8 text-center">
+      <h1 class="text-4xl font-bold text-orange-800 mb-2">🏆 Leaderboards</h1>
+      <p class="text-gray-600">Compare your progress with others</p>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="flex justify-center gap-4 mb-8">
+      <button onclick="showGlobalLeaderboard()" id="globalBtn" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg transition">
+        🌍 Global Leaderboard
+      </button>
+      <button onclick="showFriendsLeaderboard()" id="friendsBtn" class="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white font-bold rounded-lg transition">
+        👥 Friends Leaderboard
+      </button>
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white">
+            <tr>
+              <th class="px-6 py-3 text-left font-bold">Rank</th>
+              <th class="px-6 py-3 text-left font-bold">Player</th>
+              <th class="px-6 py-3 text-center font-bold">Level</th>
+              <th class="px-6 py-3 text-right font-bold">Points</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody">
+            <tr>
+              <td colspan="4" class="text-center py-8 text-gray-500">
+                Loading leaderboard...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Your Rank Section -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">📍 Your Rank</h3>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg p-4 text-center">
+          <p class="text-gray-600 text-sm font-semibold">Current Rank</p>
+          <p class="text-3xl font-bold text-yellow-600" id="yourRank">--</p>
+        </div>
+        <div class="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg p-4 text-center">
+          <p class="text-gray-600 text-sm font-semibold">Points</p>
+          <p class="text-3xl font-bold text-blue-600" id="yourPoints">--</p>
+        </div>
+        <div class="bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg p-4 text-center">
+          <p class="text-gray-600 text-sm font-semibold">Level</p>
+          <p class="text-3xl font-bold text-purple-600" id="yourLevel">--</p>
+        </div>
+        <div class="bg-gradient-to-br from-green-100 to-green-200 rounded-lg p-4 text-center">
+          <p class="text-gray-600 text-sm font-semibold">Next Level</p>
+          <p class="text-lg font-bold text-green-600" id="pointsToNext">--</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="mt-8 bg-orange-50 border-l-4 border-orange-500 rounded p-6">
+      <h3 class="text-lg font-bold text-orange-900 mb-3">💡 Pro Tips</h3>
+      <ul class="text-sm text-orange-800 space-y-2">
+        <li>✓ Complete games to earn points and climb the leaderboard</li>
+        <li>✓ Unlock badges to boost your ranking</li>
+        <li>✓ Add friends and compete with people you know</li>
+        <li>✓ Keep your profile public to appear on the global leaderboard</li>
+      </ul>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="mt-8 text-center">
+      <a href="/dashboard" class="text-blue-600 hover:text-blue-800 font-semibold mr-4">← Back to Dashboard</a>
+      <a href="/games" class="text-purple-600 hover:text-purple-800 font-semibold">Play Games →</a>
+    </div>
+  </div>
+
+  <script>
+    let currentLeaderboard = "global";
+    let userRank = null;
+
+    async function loadGlobalLeaderboard() {
+      try {
+        const response = await fetch("/api/leaderboard/global");
+        const leaderboard = await response.json();
+        displayLeaderboard(leaderboard);
+        findUserRank(leaderboard);
+      } catch (error) {
+        console.error("Error loading leaderboard:", error);
+        document.getElementById("leaderboardBody").innerHTML = 
+          '<tr><td colspan="4" class="text-center py-8 text-red-500">Failed to load leaderboard</td></tr>';
+      }
+    }
+
+    async function loadFriendsLeaderboard() {
+      try {
+        const response = await fetch("/api/leaderboard/friends");
+        const leaderboard = await response.json();
+        displayLeaderboard(leaderboard);
+        findUserRank(leaderboard);
+      } catch (error) {
+        console.error("Error loading friends leaderboard:", error);
+        document.getElementById("leaderboardBody").innerHTML = 
+          '<tr><td colspan="4" class="text-center py-8 text-red-500">Failed to load leaderboard</td></tr>';
+      }
+    }
+
+    function displayLeaderboard(leaderboard) {
+      const tbody = document.getElementById("leaderboardBody");
+      
+      if (leaderboard.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-500">No players found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = leaderboard.map((player, index) => `
+        <tr class="border-b hover:bg-yellow-50 transition ${player.isCurrentUser ? 'bg-yellow-100 font-bold' : ''}">
+          <td class="px-6 py-4">
+            <span class="text-2xl">
+              ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white text-sm font-bold mr-3">
+                ${player.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p class="font-semibold text-gray-800">${player.name}</p>
+                <p class="text-xs text-gray-600">${player.isCurrentUser ? '(You)' : ''}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full font-bold">
+              ${player.level}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <span class="text-xl font-bold text-yellow-600">${player.points.toLocaleString()}</span>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function findUserRank(leaderboard) {
+      const user = leaderboard.find(p => p.isCurrentUser);
+      if (user) {
+        userRank = user.rank;
+        document.getElementById("yourRank").textContent = `#${user.rank}`;
+        document.getElementById("yourPoints").textContent = user.points.toLocaleString();
+        document.getElementById("yourLevel").textContent = user.level;
+        
+        const pointsToNext = (user.level * 500) - user.points;
+        document.getElementById("pointsToNext").textContent = 
+          pointsToNext > 0 ? `${pointsToNext} points` : "Next level!";
+      }
+    }
+
+    function showGlobalLeaderboard() {
+      currentLeaderboard = "global";
+      document.getElementById("globalBtn").classList.add("bg-orange-500");
+      document.getElementById("globalBtn").classList.remove("bg-gray-400");
+      document.getElementById("friendsBtn").classList.remove("bg-orange-500");
+      document.getElementById("friendsBtn").classList.add("bg-gray-400");
+      loadGlobalLeaderboard();
+    }
+
+    function showFriendsLeaderboard() {
+      currentLeaderboard = "friends";
+      document.getElementById("friendsBtn").classList.add("bg-orange-500");
+      document.getElementById("friendsBtn").classList.remove("bg-gray-400");
+      document.getElementById("globalBtn").classList.remove("bg-orange-500");
+      document.getElementById("globalBtn").classList.add("bg-gray-400");
+      loadFriendsLeaderboard();
+    }
+
+    // Load global leaderboard on page load
+    loadGlobalLeaderboard();
+  </script>
+</body>
+</html>

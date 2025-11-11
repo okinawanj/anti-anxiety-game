@@ -1,0 +1,243 @@
+{{> head}}
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold text-purple-800">🌟 Anxiety Relief Hub</h1>
+        <p class="text-gray-600 mt-2">Your journey to calmness starts here</p>
+      </div>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition">
+        Logout
+      </a>
+    </div>
+
+    <!-- User Stats Banner -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg shadow-lg p-6">
+        <h3 class="text-sm font-semibold opacity-90">Level</h3>
+        <p class="text-4xl font-bold mt-2" id="dashLevel">1</p>
+        <p class="text-xs opacity-75 mt-2">Mindfulness Master</p>
+      </div>
+
+      <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white rounded-lg shadow-lg p-6">
+        <h3 class="text-sm font-semibold opacity-90">Points</h3>
+        <p class="text-4xl font-bold mt-2" id="dashPoints">0</p>
+        <p class="text-xs opacity-75 mt-2">Keep practicing!</p>
+      </div>
+
+      <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg shadow-lg p-6">
+        <h3 class="text-sm font-semibold opacity-90">Sessions</h3>
+        <p class="text-4xl font-bold mt-2" id="dashSessions">0</p>
+        <p class="text-xs opacity-75 mt-2">Exercises completed</p>
+      </div>
+
+      <div class="bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-lg shadow-lg p-6">
+        <h3 class="text-sm font-semibold opacity-90">This Week</h3>
+        <p class="text-4xl font-bold mt-2" id="dashWeek">0</p>
+        <p class="text-xs opacity-75 mt-2">Sessions this week</p>
+      </div>
+    </div>
+
+    <!-- Main Action Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <a href="/breathing-exercise" class="group">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105">
+          <div class="bg-gradient-to-r from-green-400 to-teal-500 p-8 text-white">
+            <h2 class="text-3xl mb-2">🧘</h2>
+            <h3 class="text-2xl font-bold">Breathing Exercises</h3>
+            <p class="text-sm opacity-90 mt-2">Calm your mind with guided breathing techniques</p>
+          </div>
+          <div class="p-6 bg-gray-50">
+            <p class="text-gray-600 mb-4">Choose from 4 proven techniques:</p>
+            <ul class="text-sm text-gray-700 space-y-1">
+              <li>✓ Box Breathing (4-4-4-4)</li>
+              <li>✓ 4-7-8 Technique</li>
+              <li>✓ Progressive Relaxation</li>
+              <li>✓ Alternate Nostril Breathing</li>
+            </ul>
+          </div>
+        </div>
+      </a>
+
+      <a href="/games" class="group">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105">
+          <div class="bg-gradient-to-r from-pink-400 to-purple-500 p-8 text-white">
+            <h2 class="text-3xl mb-2">🎮</h2>
+            <h3 class="text-2xl font-bold">Relaxation Games</h3>
+            <p class="text-sm opacity-90 mt-2">Play games designed to reduce anxiety and earn rewards</p>
+          </div>
+          <div class="p-6 bg-gray-50">
+            <p class="text-gray-600 mb-4">Explore mindful gaming:</p>
+            <ul class="text-sm text-gray-700 space-y-1">
+              <li>🧠 Memory Match</li>
+              <li>💨 Breathing Sync</li>
+              <li>🌿 Zen Garden</li>
+              <li>🎨 Color Calm</li>
+            </ul>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Quick Stats & Trends -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Anxiety Level Trend -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Your Progress</h3>
+        <div id="progressChart" class="text-center">
+          <canvas id="trendCanvas"></canvas>
+        </div>
+        <div class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+          <p class="text-sm text-green-800">
+            <span class="font-bold">Average Improvement:</span>
+            <span id="avgImprovement" class="text-lg text-green-600">--</span> points per session
+          </p>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">📝 Recent Activity</h3>
+        <div id="recentActivity" class="space-y-3">
+          <div class="text-center py-8 text-gray-500">
+            <p>Loading your activity...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">🏆 Your Badges</h3>
+      <div id="badgesDisplay" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-gray-600">🔒 Locked</p>
+          <p class="text-xs text-gray-500">Complete 1 session</p>
+        </div>
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-gray-600">🔒 Locked</p>
+          <p class="text-xs text-gray-500">Complete 5 sessions</p>
+        </div>
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-gray-600">🔒 Locked</p>
+          <p class="text-xs text-gray-500">Complete 10 sessions</p>
+        </div>
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-gray-600">🔒 Locked</p>
+          <p class="text-xs text-gray-500">Complete 20 sessions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wellness Tips -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6 mb-8">
+      <h3 class="text-xl font-bold mb-4">💡 Daily Wellness Tip</h3>
+      <p id="dailyTip" class="text-lg">
+        Consistency is key! Try to do at least one breathing exercise daily for maximum benefit.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-gray-600">
+      <p class="mb-2">Remember: This app provides exercises for anxiety relief only.</p>
+      <p class="text-sm">If you're experiencing severe anxiety, please consult with a healthcare professional.</p>
+    </div>
+  </div>
+
+  {{> footer}}
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const badgeInfo = {
+      breathing_novice: { name: '🌱 Breathing Novice', emoji: '🌱' },
+      breathing_adept: { name: '🌿 Breathing Adept', emoji: '🌿' },
+      breathing_master: { name: '🧘 Breathing Master', emoji: '🧘' },
+      mindfulness_warrior: { name: '⚡ Mindfulness Warrior', emoji: '⚡' }
+    };
+
+    const dailyTips = [
+      'Consistency is key! Try to do at least one breathing exercise daily for maximum benefit.',
+      'Take 5 minutes every morning to do a breathing exercise before your day starts.',
+      'If you feel anxious during the day, pause and do a quick box breathing exercise.',
+      'Games can be just as therapeutic as exercises. Play when you need a break!',
+      'Track your anxiety levels to see your progress over time.',
+      'Remember: Progress over perfection. Every session counts!',
+      'Combine breathing exercises with games for a holistic anxiety relief approach.',
+      'You\'re doing great! Keep up the excellent work on your wellness journey.'
+    ];
+
+    async function loadDashboardStats() {
+      try {
+        const response = await fetch('/api/anxiety/stats');
+        const data = await response.json();
+        
+        document.getElementById('dashLevel').textContent = data.user.level;
+        document.getElementById('dashPoints').textContent = data.user.points;
+        document.getElementById('dashSessions').textContent = data.user.totalSessions;
+        document.getElementById('dashWeek').textContent = data.stats.sessionsThisWeek;
+        document.getElementById('avgImprovement').textContent = data.stats.avgImprovement;
+
+        // Display recent activity
+        const activityContainer = document.getElementById('recentActivity');
+        if (data.stats.totalSessions === 0) {
+          activityContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Start your first breathing exercise to see activity here!</p>';
+        } else {
+          activityContainer.innerHTML = data.stats.recentLogs.map(log => `
+            <div class="border-l-4 border-blue-500 pl-4 py-2">
+              <div class="flex justify-between items-start">
+                <span class="font-semibold text-gray-800">${log.exerciseType.toUpperCase()}</span>
+                <span class="text-xs text-gray-500">${new Date(log.timestamp).toLocaleDateString()}</span>
+              </div>
+              <div class="text-sm text-gray-600">
+                <span class="text-red-600 font-bold">${log.beforeBreathing}</span> → 
+                <span class="text-green-600 font-bold">${log.afterBreathing}</span>
+                (Improvement: <span class="font-bold">${log.beforeBreathing - log.afterBreathing}</span>)
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    async function loadBadges() {
+      try {
+        const response = await fetch('/api/badges');
+        const badges = await response.json();
+        
+        const badgesDisplay = document.getElementById('badgesDisplay');
+        
+        if (badges.length === 0) {
+          badgesDisplay.innerHTML = `
+            <div class="col-span-full text-center py-8">
+              <p class="text-gray-600">Complete breathing exercises to unlock badges! 🎖️</p>
+            </div>
+          `;
+        } else {
+          badgesDisplay.innerHTML = badges.map(b => {
+            const info = badgeInfo[b.badgeType];
+            return `
+              <div class="text-center p-4 bg-yellow-50 rounded-lg border-2 border-yellow-300">
+                <p class="text-3xl">${info.emoji}</p>
+                <p class="font-semibold text-gray-800 text-sm mt-2">${info.name}</p>
+                <p class="text-xs text-gray-600">${new Date(b.earnedAt).toLocaleDateString()}</p>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (error) {
+        console.error('Error loading badges:', error);
+      }
+    }
+
+    // Set random daily tip
+    document.getElementById('dailyTip').textContent = dailyTips[Math.floor(Math.random() * dailyTips.length)];
+
+    // Load all dashboard data
+    loadDashboardStats();
+    loadBadges();
+  </script>
+</body>
+</html>
